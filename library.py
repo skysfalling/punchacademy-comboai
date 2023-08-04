@@ -15,12 +15,18 @@ class Punch:
 
 class PunchLibrary:
     def __init__(self):
-        self.jab = Punch(1, "Jab", 1, 1, ["b", "d", "e", "f"])
-        self.cross = Punch(2, "Cross", 2, 2, ["b", "d", "e", "f"])
-        self.left_hook = Punch(3, "Left Hook", 3, 3, ["a", "d"])
-        self.right_hook = Punch(4, "Right Hook", 3, 3, ["c", "f"])
+        self.jab = Punch(1, "Jab", 1, 1, ["b"])
+        self.cross = Punch(2, "Cross", 2, 2, ["b"])
+        self.left_hook = Punch(3, "Left Hook", 3, 3, ["a"])
+        self.right_hook = Punch(4, "Right Hook", 3, 3, ["c"])
         self.left_uppercut = Punch(5, "Left Uppercut", 5, 5, ["b"])
         self.right_uppercut = Punch(6, "Right Uppercut", 5, 5, ["b"])
+        self.body_jab = Punch(1, "Body Jab", 1, 1, ["e"])
+        self.body_cross = Punch(2, "Body Cross", 2, 2, ["e"])
+        self.body_left_hook = Punch(3, "Body Left Hook", 3, 3, ["d"])
+        self.body_right_hook = Punch(4, "Body Right Hook", 3, 3, ["f"])
+        self.body_left_uppercut = Punch(5, "Body Left Uppercut", 5, 5, ["e"])
+        self.body_right_uppercut = Punch(6, "Body Right Uppercut", 5, 5, ["e"])
 
         self.punches = [
             self.jab,
@@ -28,7 +34,13 @@ class PunchLibrary:
             self.left_hook,
             self.right_hook,
             self.left_uppercut,
-            self.right_uppercut
+            self.right_uppercut,            
+            self.body_jab,
+            self.body_cross,
+            self.body_left_hook,
+            self.body_right_hook,
+            self.body_left_uppercut,
+            self.body_right_uppercut
         ]
 
     def GetPunch(self, index):
