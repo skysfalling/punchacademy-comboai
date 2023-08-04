@@ -1,23 +1,26 @@
 class Punch:
-    def __init__(self, number, name, weight, sector_req):
+    def __init__(self, number, name, damage, stamina, target_sectors):
         self.number = number
         self.name = name
-        self.weight = weight  # used for calculating damage and stamina reduction
-        self.sector_req = sector_req
+        self.target_sectors = target_sectors
+        self.target_sectors_str = "".join(target_sectors)
+
+        self.damage = damage
+        self.stamina = stamina
 
     def __repr__(self) -> str:
-        sect_req_str = "".join(self.sector_req)
-        return f"#{self.number}-{self.name} :: (dmg={self.weight}, req='{sect_req_str}')"
+        target_sectors = "".join(self.target_sectors)
+        return f"{self.number} - {self.name} :: (dmg={self.damage} stm={self.stamina} tgt={self.target_sectors_str})"
 
 
 class PunchLibrary:
     def __init__(self):
-        self.jab = Punch(1, "Jab", 1, ["B", "D", "E", "F"])
-        self.cross = Punch(2, "Cross", 2, ["B", "D", "E", "F"])
-        self.left_hook = Punch(3, "Left Hook", 4, ["A", "D"])
-        self.right_hook = Punch(4, "Right Hook", 4, ["C", "F"])
-        self.left_uppercut = Punch(5, "Left Uppercut", 3, ["B"])
-        self.right_uppercut = Punch(6, "Right Uppercut", 3, ["B"])
+        self.jab = Punch(1, "Jab", 1, 1, ["b", "d", "e", "f"])
+        self.cross = Punch(2, "Cross", 2, 2, ["b", "d", "e", "f"])
+        self.left_hook = Punch(3, "Left Hook", 3, 3, ["a", "d"])
+        self.right_hook = Punch(4, "Right Hook", 3, 3, ["c", "f"])
+        self.left_uppercut = Punch(5, "Left Uppercut", 5, 5, ["b"])
+        self.right_uppercut = Punch(6, "Right Uppercut", 5, 5, ["b"])
 
         self.punches = [
             self.jab,
@@ -38,9 +41,11 @@ class PunchLibrary:
         for sector in sectorGroup.GetFreeSectors():
             for punch in self.punches:
                 # if sector is in punch requirements, add to available punches
-                if sector.name in punch.sector_req and punch not in punchOptions:
+                if sector.name in punch.target_sectors and punch not in punchOptions:
                     punchOptions.append(punch)
-        return punchOptions
+        sortedPunchOptions = sorted(
+            punchOptions, key=lambda item: item.number)
+        return sortedPunchOptions
 
 
 punchLibrary = PunchLibrary()
@@ -48,11 +53,11 @@ punchLibrary = PunchLibrary()
 # ========================================= /// >>
 
 defense_stances = {
-    "centerface": "B",
-    "looseface": "AC",
-    "leftside": "ADE",
-    "rightside": "CEF",
-    "body": "DEF"
+    "centerface": "b",
+    "looseface": "ac",
+    "leftside": "ade",
+    "rightside": "cef",
+    "body": "def"
 }
 
 
@@ -60,6 +65,7 @@ class Combo:
     def __init__(self, combo_str):
         self.combo_str = combo_str
         self.punches = []
+        self.damage_output = 0
         self.stamina_cost = 0
 
         # get punches from combo string
@@ -68,10 +74,11 @@ class Combo:
 
         # get stamina cost from punches
         for punch in self.punches:
-            self.stamina_cost += punch.weight
+            self.stamina_cost += punch.stamina
+            self.damage_output += punch.damage
 
     def __repr__(self) -> str:
-        out_string = f"Combo [{self.combo_str}] - Stamina Cost({self.stamina_cost})"
+        out_string = f"Combo [{self.combo_str}] - (stm: {self.stamina_cost} , dmg: {self.damage_output})"
         for punch in self.punches:
             out_string += "\n\t" + str(punch)
         return out_string
@@ -102,19 +109,19 @@ class Sector:
 
 class SectorGroup:
     def __init__(self, sectors_str=""):
-        self.sectorA = Sector("A", 2)
-        self.sectorB = Sector("B", 3)
-        self.sectorC = Sector("C", 2)
-        self.sectorD = Sector("D", 1)
-        self.sectorE = Sector("E", 1)
-        self.sectorF = Sector("F", 1)
+        self.sectorA = Sector("a", 2)
+        self.sectorB = Sector("b", 3)
+        self.sectorC = Sector("c", 2)
+        self.sectorD = Sector("d", 1)
+        self.sectorE = Sector("e", 1)
+        self.sectorF = Sector("f", 1)
         self.sectors = [self.sectorA, self.sectorB, self.sectorC,
                         self.sectorD, self.sectorE, self.sectorF]
 
-        self.sectors_str = sectors_str.upper()
+        self.sectors_str = sectors_str.lower()
 
     def GetSector(self, name):
-        name = name.upper()
+        name = name.lower()
         for sector in self.sectors:
             if (name == sector.name):
                 return sector
@@ -136,23 +143,23 @@ class SectorGroup:
             sector.blocked = False
 
     def SetSectorGroup(self, sectors_str):
-        self.sectors_str = sectors_str.upper()
+        self.sectors_str = sectors_str.lower()
         for sector in self.sectors:
             # if sector.name in sectors_str, set as blocked
             if sector.name in sectors_str:
                 sector.blocked = True
 
     def Visualize(self):
-        out_string = "\t"
-        for i in range(6):
-            if (i == 3):
-                out_string += "\n\t"  # lowerbody newline
-            out_string += "| "
-            if (self.sectors[i].blocked):
-                out_string += "X"
-            else:
-                out_string += "."
-            out_string += " |"
+        out_string = ""
+        count = 0
+        for sector in self.sectors:
+            mark = "X"
+            count += 1
+            if sector.blocked == False:
+                mark = sector.name
+            out_string += f"| {mark} |"
+            if count == 3:
+                out_string += "\n"
 
         print(out_string)
 

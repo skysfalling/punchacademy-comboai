@@ -12,11 +12,15 @@ class Challenger:
 
         self.curr_defense_stance = defense_stance.lower().strip()
 
+    def __repr__(self) -> str:
+        out_string = f"{self.name} >> "
+        out_string += str(self.curr_defense_stance)
+        out_string += " >> " + str(self.curr_stamina) + \
+            "/" + str(self.full_stamina)
+        return out_string
+
     def Visualize(self):
-        print(
-            f"\n>> {self.name.upper()} DEFENSE STANCE : {self.curr_defense_stance.upper()}")
         self.sectorGroup.Visualize()
-        print("\t>> Stamina:", self.curr_stamina, "\n")
 
     def SetCurrStamina(self):
         updated_stamina = self.full_stamina
@@ -27,10 +31,21 @@ class Challenger:
 
         self.curr_stamina = updated_stamina
 
-    def SetDefenseStance(self, defense_stance):
-        self.curr_defense_stance = defense_stance.lower().strip()
+    def SetDefenseStance(self, stance):
+        self.curr_defense_stance = stance.lower().strip()
 
-        if defense_stance in defense_stances.keys():
-            self.sectorGroup.SetSectorGroup(defense_stances[defense_stance])
+        if stance in defense_stances.keys():
+            self.sectorGroup.SetSectorGroup(defense_stances[stance])
 
         self.SetCurrStamina()
+
+    def GetPunchOptions(self):
+        punchOptions = punchLibrary.GetPunchOptions(
+            self.sectorGroup)
+        return punchOptions
+
+    def PrintPunchOptions(self):
+        punchOptions = punchLibrary.GetPunchOptions(
+            self.sectorGroup)
+        for option in punchOptions:
+            print(option)
