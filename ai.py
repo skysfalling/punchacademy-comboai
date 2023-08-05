@@ -1,18 +1,18 @@
 from library import *
 from challenger import *
+import random
 
 
 class AI:
-    def __init__(self, challenger, player):
-        self.challenger = challenger
-        self.player = player
+    def __init__(self):
+        self.challenger = None
         self.current_combo = None
 
     # returns a list of punch options for the ai to use based on the player's free sectors
 
     def GetPunchOptions(self):
         punchOptions = punchLibrary.GetPunchOptions(
-            self.player.sectorGroup)
+            self.challenger.opponent.sectorGroup)
         return punchOptions
 
     # returns a list of combo options for the ai to use based on the available punch options
@@ -64,3 +64,39 @@ class AI:
                 lowest_stamina_cost = combo_stamina_cost
 
         return best_combo
+
+    def ChooseAction(self):
+        print("AI Choosing Attack or Defend")
+        punch_options = self.challenger.GetPunchOptions()
+
+        # Set up base utility scores
+        attack_utility = 50
+        defend_utility = 40
+
+        # Choose action with the highest utility
+        if attack_utility > defend_utility:
+            print("AI Choosing Attack")
+            return 1
+        else:
+            print("AI Choosing Defend")
+            return 2
+
+    def ChoosePunch(self):
+        # Get best combos in terms of damage and stamina
+        best_damage_combo = self.GetBestDamageCombo()
+        best_stamina_combo = self.GetBestStaminaCombo()
+
+        # If AI has enough stamina, choose punch from combo with highest damage,
+        # otherwise, choose punch from combo with lowest stamina cost
+        if self.challenger.curr_stamina >= best_damage_combo.stamina_cost:
+            chosen_combo = best_damage_combo
+        else:
+            chosen_combo = best_stamina_combo
+
+        # Choose the first punch from the chosen combo
+        chosen_punch = chosen_combo.punches[0]
+        return chosen_punch
+
+    def ChooseDefenseStance(self):
+        random_stance = random.choice(list(defense_stances.keys()))
+        self.challenger.SetDefenseStance(random_stance)

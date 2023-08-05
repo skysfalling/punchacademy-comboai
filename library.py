@@ -10,7 +10,7 @@ class Punch:
 
     def __repr__(self) -> str:
         target_sectors = "".join(self.target_sectors)
-        return f"{self.number} - {self.name} :: (dmg={self.damage} stm={self.stamina} tgt={self.target_sectors_str})"
+        return f"{self.name} :: (dmg={self.damage} stm={self.stamina} tgt={self.target_sectors_str})"
 
 
 class PunchLibrary:
@@ -34,7 +34,7 @@ class PunchLibrary:
             self.left_hook,
             self.right_hook,
             self.left_uppercut,
-            self.right_uppercut,            
+            self.right_uppercut,
             self.body_jab,
             self.body_cross,
             self.body_left_hook,
